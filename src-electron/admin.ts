@@ -71,6 +71,14 @@ export async function startBackend(addr: string) {
     const homeDir = encodeURIComponent(log.getAppConfigDir());
     const args = ['-addr=' + addr, '-home=' + homeDir];
 
+    // In dev mode, always start px directly to avoid conflicts with any
+    // system-installed px-service (which may use a different protocol version)
+    if (isDev) {
+        log.info('[Backend] Dev mode: starting px directly');
+        startNormally(backendPath, args);
+        return;
+    }
+
     // Проверяем, запущен ли сервис (независимо от флага настроек)
     const serviceRunning = await isServiceRunning();
     const serviceModeFlag = isServiceModeEnabled();
