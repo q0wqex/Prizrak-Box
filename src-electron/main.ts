@@ -1,5 +1,6 @@
 import {app, BrowserWindow, BrowserWindowConstructorOptions, ipcMain, nativeImage, session} from 'electron';
 import path from 'node:path';
+import fs from 'node:fs';
 import {startServer, storeInfo} from "./server";
 import {doQuit, initTray, showWindow} from "./tray";
 import {initShortcut} from "./shortcut";
@@ -345,6 +346,24 @@ for (const arg of process.argv) {
     if (isDeepLinkUrl(arg)) {
         pendingDeepLinks.push(arg);
     }
+}
+
+// Clean up stale Chromium singleton lock files on Linux.
+// These are left behind when the app crashes or is force-killed,
+// and prevent the next launch from acquiring the lock (causing silent exit).
+if (process.platform === 'linux') {
+    try {
+        const configDir = app.getPath('userData');
+        const singletonSocket = path.join(configDir, 'SingletonSocket');
+        if (fs.existsSync(singletonSocket)) {
+            const target = fs.readlinkSync(singletonSocket);
+            if (!fs.existsSync(target)) {
+                for (const name of ['SingletonSocket', 'SingletonCookie', 'SingletonLock']) {
+                    try { fs.rmSync(path.join(configDir, name)); } catch {}
+                }
+            }
+        }
+    } catch {}
 }
 
 // 单例模式
