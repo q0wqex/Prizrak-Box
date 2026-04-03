@@ -18,6 +18,11 @@ import {
 import {selectDirectory} from "./selector";
 import {doChange} from "./change";
 
+// Force GTK 4 on Linux to avoid GTK 2/3 vs GTK 4 conflict (e.g. Fedora 42)
+if (process.platform === 'linux') {
+    app.commandLine.appendSwitch('gtk-version', '4');
+}
+
 // 是否在开发模式
 const isDev = !app.isPackaged;
 
