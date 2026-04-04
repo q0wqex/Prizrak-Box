@@ -205,6 +205,18 @@ const loadProfiles = async () => {
   try {
     const list = await api.getProfileList();
     pickSelectedProfile(list);
+    // On startup fProfile is empty (no id), so Proxies.vue skips fetching
+    // proxy groups. Set it from the active profile so groups load correctly
+    // on re-launch without requiring the user to manually re-select a profile.
+    // Guard prevents re-entry: if fProfile already has an id, do nothing.
+    if (!webStore.fProfile?.id) {
+      const primary = list.find((item: any) => item?.primary);
+      const selected = primary ?? list.find((item: any) => item?.selected);
+      const profile = selected ?? list[0];
+      if (profile?.id) {
+        webStore.fProfile = toRaw(profile);
+      }
+    }
   } catch (error) {
     console.error("Failed to load profiles", error);
   }
