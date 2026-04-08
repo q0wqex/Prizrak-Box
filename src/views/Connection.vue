@@ -226,13 +226,6 @@ function closeAll() {
     <template #bottom>
       <div class="conn">
         <el-space class="op">
-          <div class="search" v-if="connectionStore.viewMode === 'list' || connectionStore.viewMode === 'process'">
-            <MySimpleInput
-                :onInputChange="handleInputChange"
-                :placeholder="$t('connections.search')"
-                class="search"
-            ></MySimpleInput>
-          </div>
           <el-button @click="closeAll">
             {{ $t('connections.close') }}
           </el-button>
@@ -244,6 +237,13 @@ function closeAll() {
                 </div>
               </template>
             </el-segmented>
+          </div>
+          <div class="search" v-if="connectionStore.viewMode === 'list' || connectionStore.viewMode === 'process'">
+            <MySimpleInput
+                :onInputChange="handleInputChange"
+                :placeholder="$t('connections.search')"
+                class="search"
+            ></MySimpleInput>
           </div>
         </el-space>
       </div>

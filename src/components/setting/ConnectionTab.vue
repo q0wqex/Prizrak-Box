@@ -182,13 +182,6 @@ function closeAll() {
 <template>
   <div class="conn">
     <el-space class="op">
-      <div class="search" v-if="connectionStore.viewMode === 'list' || connectionStore.viewMode === 'process'">
-        <MySimpleInput
-            :onInputChange="handleInputChange"
-            :placeholder="$t('connections.search')"
-            class="search"
-        />
-      </div>
       <button class="pill-btn" @click="closeAll">{{ $t('connections.close') }}</button>
       <div class="pill-toggle">
         <button
@@ -203,6 +196,13 @@ function closeAll() {
             :class="['pill-toggle__btn', { 'is-active': connectionStore.viewMode === 'process' }]"
             @click="connectionStore.viewMode = 'process'"
         >{{ $t('connections.process-view') }}</button>
+      </div>
+      <div class="search" v-if="connectionStore.viewMode === 'list' || connectionStore.viewMode === 'process'">
+        <MySimpleInput
+            :onInputChange="handleInputChange"
+            :placeholder="$t('connections.search')"
+            class="search"
+        />
       </div>
     </el-space>
   </div>
