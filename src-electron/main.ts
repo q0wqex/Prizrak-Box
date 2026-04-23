@@ -175,6 +175,23 @@ const createWindow = (isBoot: boolean) => {
         deepLinkHandlerReady = false;
         mainWindow = null;
     });
+
+    // Reload on renderer crash (blank white screen prevention)
+    mainWindow.webContents.on('render-process-gone', (_event, details) => {
+        if (details.reason !== 'clean-exit') {
+            log.warn('[Main] Renderer process gone, reason:', details.reason, '— reloading');
+            mainWindow?.webContents.reload();
+        }
+    });
+
+    // Ignore ERR_ABORTED (-3) which is intentional navigation cancellation,
+    // not an actual load failure
+    mainWindow.webContents.on('did-fail-load', (_event, errorCode, errorDescription, _url, isMainFrame) => {
+        if (errorCode !== -3 && isMainFrame) {
+            log.warn('[Main] Page load failed:', errorCode, errorDescription, '— reloading');
+            mainWindow?.webContents.reload();
+        }
+    });
 };
 
 const isDeepLinkUrl = (arg: string | undefined): arg is string => {
@@ -239,6 +256,30 @@ ipcMain.on(DEEP_LINK_READY_EVENT, (event) => {
 
     deepLinkHandlerReady = true;
     processPendingDeepLinks();
+});
+
+// IPC обработчики для кэширования фонового изображения
+// Хранится в отдельном файле userData/px-bg-cache.json, независимо от порта сервера
+const getBgCacheFile = () => path.join(app.getPath('userData'), 'px-bg-cache.json');
+
+ipcMain.handle('bgcache:read', async () => {
+    try {
+        const content = await fs.promises.readFile(getBgCacheFile(), 'utf8');
+        return JSON.parse(content);
+    } catch {
+        return null;
+    }
+});
+
+ipcMain.handle('bgcache:write', async (_event, forBg: string, dataUrl: string) => {
+    const file = getBgCacheFile();
+    const tmp = file + '.tmp';
+    await fs.promises.writeFile(tmp, JSON.stringify({forBg, dataUrl}), 'utf8');
+    await fs.promises.rename(tmp, file);
+});
+
+ipcMain.handle('bgcache:clear', async () => {
+    try { await fs.promises.unlink(getBgCacheFile()); } catch {}
 });
 
 // IPC обработчики для сервиса
