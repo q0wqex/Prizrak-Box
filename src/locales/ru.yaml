@@ -309,6 +309,11 @@ rule:
     path: Локальный путь
     never: Никогда
     empty: Провайдеры правил не найдены
+    viewRules: Просмотр правил
+    rulesSearch: Поиск правил
+    rulesEmpty: Правила не найдены
+    prevMatch: Предыдущее совпадение
+    nextMatch: Следующее совпадение
 
 connections:
   title: Соединения

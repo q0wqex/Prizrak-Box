@@ -309,6 +309,11 @@ rule:
     path: 本地路径
     never: 从未更新
     empty: 暂无规则提供者
+    viewRules: 查看规则
+    rulesSearch: 搜索规则
+    rulesEmpty: 暂无规则
+    prevMatch: 上一个匹配
+    nextMatch: 下一个匹配
 
 connections:
   title: 连接
