@@ -309,6 +309,11 @@ rule:
     path: Local path
     never: Never updated
     empty: No rule providers found
+    viewRules: View rules
+    rulesSearch: Search rules
+    rulesEmpty: No rules found
+    prevMatch: Previous match
+    nextMatch: Next match
 
 connections:
   title: Connections
