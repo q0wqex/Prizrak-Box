@@ -230,7 +230,7 @@ export default function createProxiesApi(proxy: any) {
                 if (excludeGroupName[name]) {
                     continue
                 }
-                const group:any = proxies[name]
+                const group: any = proxies[name]
                 if (!includeGroup[group['type']]) {
                     continue
                 }
@@ -345,6 +345,7 @@ export default function createProxiesApi(proxy: any) {
                 map.set(value, index);
             });
 
+
             // 进行排序
             if (isSort) {
                 inProxies.sort((obj1, obj2) => {
@@ -352,12 +353,12 @@ export default function createProxiesApi(proxy: any) {
                         return obj1.delay - obj2.delay
                     }
 
-                    return map.get(obj1.name) - map.get(obj2.name)
+                    return (map.get(obj1.name) ?? 999) - (map.get(obj2.name) ?? 999)
                 });
                 showProxies.sort((obj1, obj2) => obj1.delay - obj2.delay);
             } else {
-                showProxies.sort((obj1, obj2) => map.get(obj1.name) - map.get(obj2.name));
-                inProxies.sort((obj1, obj2) => map.get(obj1.name) - map.get(obj2.name));
+                showProxies.sort((obj1, obj2) => (map.get(obj1.name) ?? 999) - (map.get(obj2.name) ?? 999));
+                inProxies.sort((obj1, obj2) => (map.get(obj1.name) ?? 999) - (map.get(obj2.name) ?? 999));
             }
 
             return inProxies.concat(showProxies);
